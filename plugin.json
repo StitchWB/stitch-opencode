@@ -1,0 +1,79 @@
+{
+  "schema": "stitch.plugin/v2",
+  "id": "stitch-opencode",
+  "name": "Stitch OpenCode",
+  "version": "0.1.0",
+  "service": "opencode",
+  "kind": "service",
+  "engine": {
+    "min": "0.3.0",
+    "api": 2
+  },
+  "depends": [],
+  "entry": {
+    "module": "stitch_opencode"
+  },
+  "capabilities": [],
+  "outputs": [],
+  "signature": "",
+  "contributions": {
+    "commands": [
+      {
+        "name": "get_opencode_config",
+        "readonly": true
+      },
+      {
+        "name": "set_opencode_config",
+        "readonly": false
+      },
+      {
+        "name": "get_oh_my_openagent_config",
+        "readonly": true
+      },
+      {
+        "name": "set_oh_my_openagent_config",
+        "readonly": false
+      },
+      {
+        "name": "test_opencode_api",
+        "readonly": true
+      },
+      {
+        "name": "bulk_test_opencode_api",
+        "readonly": true
+      }
+    ],
+    "ui": {
+      "kind": "core_page",
+      "tabs": [
+        {
+          "id": "opencode",
+          "label": "stitch-opencode.tab",
+          "icon": "Settings",
+          "page": "main"
+        }
+      ]
+    },
+    "i18n": {
+      "ru": {
+        "stitch-opencode": {
+          "title": "Конфигурация OpenCode",
+          "tab": "OpenCode"
+        }
+      },
+      "en": {
+        "stitch-opencode": {
+          "title": "OpenCode configuration",
+          "tab": "OpenCode"
+        }
+      }
+    },
+    "storage": {
+      "sqlite": false
+    }
+  },
+  "generated_by": {
+    "tool": "stitch_plugin_tools",
+    "scaffold": 3
+  }
+}
