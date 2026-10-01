@@ -75,5 +75,59 @@
   "generated_by": {
     "tool": "stitch_plugin_tools",
     "scaffold": 3
-  }
+  },
+  "description": {
+    "ru": "Читает и пишет конфигурацию OpenCode (opencode.json и oh-my-openagent.json) и тестирует API-эндпоинты: одиночную проверку с обнаружением моделей и массовую проверку ключей. Добавляет вкладку OpenCode.",
+    "en": "Reads and writes OpenCode configuration (opencode.json and oh-my-openagent.json) and tests API endpoints: single checks with model discovery and bulk key testing. Adds an OpenCode tab."
+  },
+  "author": "WhiteBite",
+  "category": "ai-tools",
+  "status": "beta",
+  "icon": "💻",
+  "features": [
+    {
+      "title": {
+        "ru": "Чтение и запись opencode.json",
+        "en": "Read and write opencode.json"
+      },
+      "status": "stable"
+    },
+    {
+      "title": {
+        "ru": "Чтение и запись oh-my-openagent.json",
+        "en": "Read and write oh-my-openagent.json"
+      },
+      "status": "stable"
+    },
+    {
+      "title": {
+        "ru": "Тест API-эндпоинта с обнаружением доступных моделей",
+        "en": "API endpoint test with model discovery"
+      },
+      "status": "stable"
+    },
+    {
+      "title": {
+        "ru": "Массовый параллельный тест нескольких API-ключей",
+        "en": "Bulk parallel testing of multiple API keys"
+      },
+      "status": "stable"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1.0",
+      "date": "2026-08-22",
+      "changes": [
+        {
+          "ru": "Команды конфигурации OpenCode и oh-my-openagent",
+          "en": "OpenCode and oh-my-openagent config commands"
+        },
+        {
+          "ru": "Тестирование API: одиночное и массовое",
+          "en": "API testing: single and bulk"
+        }
+      ]
+    }
+  ]
 }
