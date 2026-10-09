@@ -8,6 +8,7 @@ shutdown.  Mirrors the starter test in the plugin template repo.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -27,7 +28,21 @@ def _request(rid: int, method: str, params: dict | None = None) -> str:
     )
 
 
-def _drive(lines: list[str]) -> dict[int, dict]:
+def _init(rid: int, data_dir: str) -> str:
+    return _request(
+        rid,
+        "plugin.init",
+        {
+            "engine_api": 2,
+            "plugin_id": PLUGIN_ID,
+            "db_path": str(Path(data_dir) / "plugin.db"),
+            "data_dir": data_dir,
+            "supported": [],
+        },
+    )
+
+
+def _drive(lines: list[str], env: dict[str, str] | None = None) -> dict[int, dict]:
     """Feed JSON-RPC request lines, return responses keyed by id."""
     proc = subprocess.run(
         [sys.executable, "-m", MODULE],
@@ -36,6 +51,7 @@ def _drive(lines: list[str]) -> dict[int, dict]:
         text=True,
         encoding="utf-8",
         cwd=str(PACKAGE_DIR),
+        env=env,
         timeout=30,
     )
     assert proc.returncode == 0, f"plugin exited {proc.returncode}: {proc.stderr}"
@@ -54,17 +70,7 @@ def test_lifecycle_init_migrate_ping_command_shutdown() -> None:
     with tempfile.TemporaryDirectory() as td:
         responses = _drive(
             [
-                _request(
-                    1,
-                    "plugin.init",
-                    {
-                        "engine_api": 2,
-                        "plugin_id": PLUGIN_ID,
-                        "db_path": str(Path(td) / "plugin.db"),
-                        "data_dir": td,
-                        "supported": [],
-                    },
-                ),
+                _init(1, td),
                 _request(
                     2,
                     "plugin.call",
@@ -93,3 +99,36 @@ def test_lifecycle_init_migrate_ping_command_shutdown() -> None:
     )
 
     assert responses[5]["result"] is None
+
+
+def test_injected_config_dir_wins_over_sandbox_home(tmp_path: Path) -> None:
+    """Given STITCH_OPENCODE_CONFIG_DIR (host shim), when set_opencode_config
+    runs, then the config lands in the injected dir, not under Path.home()."""
+    config_dir = tmp_path / "real-config"
+    env = dict(os.environ)
+    env["STITCH_OPENCODE_CONFIG_DIR"] = str(config_dir)
+    with tempfile.TemporaryDirectory() as td:
+        responses = _drive(
+            [
+                _init(1, td),
+                _request(
+                    2,
+                    "plugin.call",
+                    {
+                        "name": "set_opencode_config",
+                        "params": {"config": {"model": "injected"}},
+                    },
+                ),
+                _request(
+                    3,
+                    "plugin.call",
+                    {"name": "get_opencode_config", "params": {}},
+                ),
+                _request(4, "plugin.shutdown"),
+            ],
+            env=env,
+        )
+    assert responses[2]["result"]["success"] is True
+    assert responses[3]["result"] == {"model": "injected"}
+    written = json.loads((config_dir / "opencode.json").read_text(encoding="utf-8"))
+    assert written == {"model": "injected"}

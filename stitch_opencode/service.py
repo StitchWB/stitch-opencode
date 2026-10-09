@@ -14,13 +14,22 @@ I/O (sync handlers) and ``httpx`` for the API tester (same dep as core).
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
 
 
 def _config_dir() -> Path:
-    """OpenCode stores configs in ~/.config/opencode on all platforms."""
+    """OpenCode stores configs in ~/.config/opencode on all platforms.
+
+    The Stitch host injects STITCH_OPENCODE_CONFIG_DIR with the real path:
+    the plugin child runs with a sandbox-scoped USERPROFILE, so
+    ``Path.home()`` alone would read/write a phantom config dir.
+    """
+    injected = os.environ.get("STITCH_OPENCODE_CONFIG_DIR", "").strip()
+    if injected:
+        return Path(injected)
     return Path.home() / ".config" / "opencode"
 
 
