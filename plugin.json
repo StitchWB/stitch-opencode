@@ -2,7 +2,7 @@
   "schema": "stitch.plugin/v2",
   "id": "stitch-opencode",
   "name": "Stitch OpenCode",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "service": "opencode",
   "kind": "service",
   "engine": {
@@ -115,6 +115,13 @@
     }
   ],
   "changelog": [
+    {
+      "version": "0.1.1",
+      "date": "2026-10-09",
+      "changes": [
+        "Real user config dir honored under sandbox"
+      ]
+    },
     {
       "version": "0.1.0",
       "date": "2026-08-22",
