@@ -249,13 +249,16 @@ def bulk_test_api(base_url: str, api_keys: list[str], concurrency: int = 10) -> 
         except Exception as e:  # noqa: BLE001 — mirror core behaviour
             return {"key": key, "status": "error", "error": str(e)}
 
-    semaphore = asyncio.Semaphore(concurrency)
+    async def _run() -> list[dict[str, Any]]:
+        semaphore = asyncio.Semaphore(concurrency)
 
-    async def limited_test(key: str) -> dict[str, Any]:
-        async with semaphore:
-            return await test_single_key(key)
+        async def limited_test(key: str) -> dict[str, Any]:
+            async with semaphore:
+                return await test_single_key(key)
 
-    results = asyncio.run(asyncio.gather(*[limited_test(key) for key in api_keys]))
+        return list(await asyncio.gather(*[limited_test(key) for key in api_keys]))
+
+    results = asyncio.run(_run())
 
     return {
         "success": True,
